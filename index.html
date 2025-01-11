@@ -75,17 +75,23 @@
         .ranking,
         .category-best {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            /* Ajuste automático de columnas */
+            grid-auto-rows: minmax(100px, auto);
+            /* Altura mínima de las filas */
+            gap: 28px;
+            /* Espacio entre columnas y filas */
             justify-content: center;
         }
+
+
 
         .card {
             background: rgba(30, 30, 30, 0.9);
             border: 1px solid #444;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            width: 160px;
+            width: 150px;
             padding: 10px;
             position: relative;
             text-align: center;
@@ -100,8 +106,8 @@
         }
 
         .card img {
-            width: 50px;
-            height: 50px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             display: block;
             margin: 0 auto;

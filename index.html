@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Competitivo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            background-image: url('imagenes/logo.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            opacity: 1;
+            /* Reduce la opacidad del logo */
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #ffffff;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1::before,
+        h2::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+            border-radius: 10px;
+        }
+
+        .filter {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px auto;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .filter select {
+            background: #2e2e2e;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 30%;
+        }
+
+        .ranking,
+        .category-best {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #444;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 160px;
+            padding: 10px;
+            position: relative;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 0.6rem;
+            /* Tamaño de fuente reducido */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+        }
+
+        .card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            font-size: 10px;
+        }
+
+        .card .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .card .progress-bar div {
+            height: 100%;
+            text-align: center;
+            line-height: 10px;
+            color: #fff;
+        }
+
+        .progress-red {
+            background: red;
+        }
+
+        .progress-yellow {
+            background: yellow;
+            color: black;
+        }
+
+        .progress-green {
+            background: green;
+        }
+
+        .male {
+            color: #00b8d4;
+        }
+
+        .female {
+            color: #ff007f;
+        }
+
+        .trophy {
+            width: 25px;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+        }
+
+        .medal {
+            width: 30px;
+            margin: 10px auto;
+        }
+
+        #filters {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="filters" class="filter">
+            <select id="cnFilter" onchange="updateFilters()">
+                <option value="">Seleccione CN</option>
+            </select>
+            <select id="puestoFilter" onchange="updateFilters()">
+                <option value="">Seleccione Puesto</option>
+            </select>
+            <select id="categoriaFilter" onchange="updateFilters()">
+                <option value="">Seleccione Categoría</option>
+            </select>
+        </div>
+
+        <h1>Ranking Competitivo</h1>
+        <h2>Los Mejores de Cada Categoría</h2>
+        <div id="categoryBest" class="category-best"></div>
+
+        <h2>Ranking Completo</h2>
+        <div id="ranking" class="ranking"></div>
+    </div>
+
+    <script>
+        const colaboradores = [
+            { ranking: 1, nombre: "ELMER_GARCIA", puesto: "ABF A", cn: "TRINIDAD COATEPEQUE", colocacion: 202952, meta: 750000, brecha: -547048, diasSinDesembolso: 19, categoria: "ABF", genero: "M" },
+            { ranking: 2, nombre: "MARÍA_CASTRO", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CC PRADERA XELA", colocacion: 200754, meta: 195000, brecha: 5754, diasSinDesembolso: 27, categoria: "ASISTENTE", genero: "F" },
+            { ranking: 3, nombre: "DARWIN_GONZÁLEZ", puesto: "ADMINISTRADOR SENIOR", cn: "QUETZALTENANGO", colocacion: 173615, meta: 1, brecha: 173614, diasSinDesembolso: 27, categoria: "ADMINISTRADOR SENIOR", genero: "M" },
+            { ranking: 4, nombre: "GLADIS_VELIZ", puesto: "ADMINISTRADOR DE GC", cn: "QUETZALTENANGO", colocacion: 113621, meta: 1, brecha: 113620, diasSinDesembolso: 17, categoria: "ADMINISTRADOR DE GC", genero: "F" },
+            { ranking: 5, nombre: "NICOLASA_COLOP", puesto: "ABF A", cn: "COATEPEQUE", colocacion: 102470, meta: 750000, brecha: -647530, diasSinDesembolso: 20, categoria: "ABF", genero: "F" },
+            { ranking: 6, nombre: "JAQUELINE_REYNOSO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 101864, meta: 500000, brecha: -398136, diasSinDesembolso: 18, categoria: "ABF", genero: "F" },
+            { ranking: 7, nombre: "CLAUDIA_CHAJ", puesto: "ADMINISTRADOR DE CN", cn: "QUETZALTENANGO", colocacion: 71345, meta: 1, brecha: 71344, diasSinDesembolso: 16, categoria: "ADMINISTRADOR DE CN", genero: "F" },
+            { ranking: 8, nombre: "CARLOS_PÉREZ", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 68027, meta: 750000, brecha: -681973, diasSinDesembolso: 24, categoria: "ABF", genero: "M" },
+            { ranking: 9, nombre: "MARVIN_GONZALEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "SAN JUAN OSTUNCALCO", colocacion: 50735, meta: 195000, brecha: -144265, diasSinDesembolso: 5, categoria: "ASISTENTE", genero: "M" },
+            { ranking: 10, nombre: "LUIS_CHOZ", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 41824, meta: 97500, brecha: -55676, diasSinDesembolso: 13, categoria: "ASISTENTE", genero: "M" },
+            { ranking: 11, nombre: "GUSTAVO_SICÁ", puesto: "AUXILIAR DE ADMON DE CARTERA", cn: "QUETZALTENANGO", colocacion: 39332, meta: 195000, brecha: -155668, diasSinDesembolso: 25, categoria: "ASISTENTE", genero: "M" },
+            { ranking: 12, nombre: "EVA_GRAMAJO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 33467, meta: 500000, brecha: -466533, diasSinDesembolso: 9, categoria: "ABF", genero: "F" },
+            { ranking: 13, nombre: "WESLEY_COXAJ", puesto: "RECEPTOR PAGADOR", cn: "QUETZALTENANGO", colocacion: 17751, meta: 97500, brecha: -79749, diasSinDesembolso: 3, categoria: "ASISTENTE", genero: "M" },
+            { ranking: 14, nombre: "CLARISA_RODAS", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "XELA CENTRO", colocacion: 13322, meta: 110000, brecha: -96678, diasSinDesembolso: 4, categoria: "ASISTENTE", genero: "F" },
+
+        ];
+
+        function getBestPerCategory(data) {
+            const categories = ["ASISTENTE", "ADMINISTRADOR DE CN", "ADMINISTRADOR DE GC", "ADMINISTRADOR SENIOR", "ABF"];
+            const best = [];
+
+            categories.forEach(category => {
+                const filtered = data.filter(c => c.categoria === category);
+                if (filtered.length > 0) {
+                    const bestInCategory = filtered.reduce((prev, curr) => {
+                        return curr.colocacion > prev.colocacion ? curr : prev;
+                    });
+                    best.push(bestInCategory);
+                }
+            });
+            return best;
+        }
+
+        function renderCards(data, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            data.forEach(colaborador => {
+                const porcentaje = colaborador.meta > 0 ? (colaborador.colocacion / colaborador.meta) * 100 : 0;
+                let progressClass = "progress-red";
+                if (porcentaje > 90) progressClass = "progress-green";
+                else if (porcentaje > 75) progressClass = "progress-yellow";
+
+                const card = document.createElement("div");
+                card.className = "card";
+                const generoClass = colaborador.genero === "M" ? "male" : "female";
+
+                let specialElement = "";
+                if (containerId === "categoryBest") {
+                    specialElement = `<img src="imagenes/trofeo.jpg" alt="Trofeo" class="trophy">`;
+                } else if (colaborador.ranking <= 3) {
+                    if (colaborador.ranking === 1) {
+                        specialElement = `<img src="imagenes/primer_lugar.jpg" alt="Medalla de oro" class="medal">`;
+                    } else if (colaborador.ranking === 2) {
+                        specialElement = `<img src="imagenes/segundo_lugar.jpg" alt="Medalla de plata" class="medal">`;
+                    } else if (colaborador.ranking === 3) {
+                        specialElement = `<img src="imagenes/tercer_lugar.jpg" alt="Medalla de bronce" class="medal">`;
+                    }
+                }
+
+
+
+
+                card.innerHTML = `
+                ${specialElement}
+                    <img src="imagenes/${colaborador.nombre}.jpg" alt="${colaborador.nombre}">
+                    <h3 class="${generoClass}">${colaborador.ranking}. ${colaborador.nombre}</h3>
+                    <p><strong>Puesto:</strong> ${colaborador.puesto}</p>
+                    <p><strong>CN:</strong> ${colaborador.cn}</p>
+                    <p><strong>Colocación:</strong> ${colaborador.colocacion}</p>
+                    <p><strong>Meta:</strong> ${colaborador.meta}</p>
+                    <p><strong>Brecha:</strong> ${colaborador.brecha}</p>
+                    <p><strong>Días sin Colocar:</strong> ${colaborador.diasSinDesembolso}</p>
+                    <div class="progress-bar">
+                        <div class="${progressClass}" style="width: ${Math.min(porcentaje, 100)}%;">${Math.round(porcentaje)}%</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateFilters() {
+            const cn = document.getElementById("cnFilter").value;
+            const puesto = document.getElementById("puestoFilter").value;
+            const categoria = document.getElementById("categoriaFilter").value;
+
+            const filtered = colaboradores.filter(c => {
+                return (!cn || c.cn === cn) &&
+                    (!puesto || c.puesto === puesto) &&
+                    (!categoria || c.categoria === categoria);
+            });
+
+            // Actualizar ranking completo
+            renderCards(filtered, "ranking");
+
+            // Actualizar mejores de cada categoría
+            const bestPerCategory = getBestPerCategory(filtered);
+            renderCards(bestPerCategory, "categoryBest");
+        }
+
+        function initializeFilters() {
+            const cnSet = new Set(colaboradores.map(c => c.cn));
+            const puestoSet = new Set(colaboradores.map(c => c.puesto));
+            const categoriaSet = new Set(colaboradores.map(c => c.categoria));
+
+            const cnFilter = document.getElementById("cnFilter");
+            const puestoFilter = document.getElementById("puestoFilter");
+            const categoriaFilter = document.getElementById("categoriaFilter");
+
+            cnSet.forEach(cn => {
+                const option = document.createElement("option");
+                option.value = cn;
+                option.textContent = cn;
+                cnFilter.appendChild(option);
+            });
+
+            puestoSet.forEach(puesto => {
+                const option = document.createElement("option");
+                option.value = puesto;
+                option.textContent = puesto;
+                puestoFilter.appendChild(option);
+            });
+
+            categoriaSet.forEach(categoria => {
+                const option = document.createElement("option");
+                option.value = categoria;
+                option.textContent = categoria;
+                categoriaFilter.appendChild(option);
+            });
+        }
+
+        // Renderizar datos iniciales
+        const bestPerCategory = getBestPerCategory(colaboradores);
+        renderCards(bestPerCategory, "categoryBest");
+        renderCards(colaboradores, "ranking");
+        initializeFilters();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Asistentes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            background-image: url('imagenes/logo.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            opacity: 1;
+            /* Reduce la opacidad del logo */
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #ffffff;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1::before,
+        h2::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+            border-radius: 10px;
+        }
+
+        .filter {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px auto;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .filter select {
+            background: #2e2e2e;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 30%;
+        }
+
+        .ranking,
+        .category-best {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            /* Ajuste automático de columnas */
+            grid-auto-rows: minmax(100px, auto);
+            /* Altura mínima de las filas */
+            gap: 28px;
+            /* Espacio entre columnas y filas */
+            justify-content: center;
+        }
+
+
+
+        .card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #444;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 150px;
+            padding: 10px;
+            position: relative;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 0.8rem;
+            /* Tamaño de fuente reducido */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+        }
+
+        .card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            font-size: 10px;
+        }
+
+        .card .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .card .progress-bar div {
+            height: 100%;
+            text-align: center;
+            line-height: 10px;
+            color: #fff;
+        }
+
+        .progress-red {
+            background: red;
+        }
+
+        .progress-yellow {
+            background: yellow;
+            color: black;
+        }
+
+        .progress-green {
+            background: green;
+        }
+
+        .male {
+            color: #00b8d4;
+        }
+
+        .female {
+            color: #ff007f;
+        }
+
+        .trophy {
+            width: 25px;
+            position: absolute;
+            top: -20px;
+            right: -90px;
+        }
+
+        .medal {
+            width: 30px;
+            margin: 10px auto;
+        }
+
+        #filters {
+            margin-bottom: 30px;
+        }
+
+        .cool-button {
+            position: relative;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .cool-button:hover {
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .cool-button span {
+            position: absolute;
+            display: block;
+        }
+
+        .cool-button span:nth-child(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #fff);
+            animation: btn-hover 1s linear infinite;
+        }
+
+        .cool-button span:nth-child(2) {
+            right: 0;
+            top: -100%;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #fff);
+            animation: btn-hover 1s linear infinite 0.25s;
+        }
+
+        .cool-button span:nth-child(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(270deg, transparent, #fff);
+            animation: btn-hover 1s linear infinite 0.5s;
+        }
+
+        .cool-button span:nth-child(4) {
+            left: 0;
+            bottom: -100%;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(360deg, transparent, #fff);
+            animation: btn-hover 1s linear infinite 0.75s;
+        }
+
+        @keyframes btn-hover {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <script>
+            // Para hacerlo más interactivo, puedes añadir un mensaje al usuario al hacer clic
+            document.querySelector('.cool-button').addEventListener('click', () => {
+                alert('¡Vamos a index.html! 🚀');
+            });
+        </script>
+
+        <div id="filters" class="filter">
+            <select id="cnFilter" onchange="updateFilters()">
+                <option value="">Seleccione CN</option>
+            </select>
+            <select id="puestoFilter" onchange="updateFilters()">
+                <option value="">Seleccione Puesto</option>
+            </select>
+            <select id="categoriaFilter" onchange="updateFilters()">
+                <option value="">Seleccione Categoría</option>
+            </select>
+        </div>
+
+        <h1> Ranking Asistentes</h1>
+        <h2>Los Mejores de Cada Categoría</h2>
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <a href="index.html" class="cool-button">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Ir a Inicio
+        </a>
+        <center>
+            <h4>cualquier duda con Gustavo Sicá Ext 44373 o al 33773505</h4>
+        </center>
+
+        <div id="categoryBest" class="category-best"></div>
+
+        <h2>Ranking Completo</h2>
+        <div id="ranking" class="ranking"></div>
+    </div>
+
+    <script>
+        const colaboradores = [
+            { ranking: 1, nombre: "ELMER_GARCIA", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 423252.32, meta: 750000, brecha: -326747.68, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 2, nombre: "WALTER_EDUARDO", puesto: "ABF C", cn: "XELA CENTRO", colocacion: 416548.8, meta: 500000, brecha: -83451.2, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 3, nombre: "EDGAR_GABRIEL", puesto: "ABF A", cn: "TRINIDAD COATEPEQUE", colocacion: 340675.03, meta: 750000, brecha: -409324.97, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 4, nombre: "JOSÉ_SANCHEZ", puesto: "ABF A", cn: "SAN JUAN OSTUNCALCO", colocacion: 181362.82, meta: 750000, brecha: -568637.18, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 5, nombre: "LUCY_CHUM", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "COATEPEQUE", colocacion: 142500, meta: 110000, brecha: 32500, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 6, nombre: "MARIO_LÓPEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "XELA CENTRO", colocacion: 131500, meta: 195000, brecha: -63500, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 7, nombre: "CARLOS_PÉREZ", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 130057.11, meta: 750000, brecha: -619942.89, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 8, nombre: "HUGO_MAZARIEGOS", puesto: "ABF C", cn: "INTERPLAZA XELA", colocacion: 123916.79, meta: 500000, brecha: -376083.21, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 9, nombre: "KATHERINE_RIOS", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CABRICAN", colocacion: 121493.66, meta: 195000, brecha: -73506.34, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 10, nombre: "GLORIA_CHOJOLAN", puesto: "ABF A", cn: "CABRICAN", colocacion: 117828.57, meta: 750000, brecha: -632171.43, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 11, nombre: "KENDER_RODRIGUEZ", puesto: "ABF A", cn: "TRINIDAD COATEPEQUE", colocacion: 96600, meta: 750000, brecha: -653400, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 12, nombre: "RODERICO_ROJAS", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CABRICAN", colocacion: 92717.1, meta: 195000, brecha: -102282.9, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 13, nombre: "CESIA_LÓPEZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "TRINIDAD COATEPEQUE", colocacion: 92000, meta: 110000, brecha: -18000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 14, nombre: "NICOLASA_COLOP", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 90988.44, meta: 750000, brecha: -659011.56, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 15, nombre: "BRANDON_PÉREZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "TRINIDAD COATEPEQUE", colocacion: 85000, meta: 195000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 16, nombre: "SHALOM_FUENTES", puesto: "RECEPTOR PAGADOR", cn: "CC PRADERA XELA", colocacion: 76900, meta: 97500, brecha: -20600, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 17, nombre: "FABIOLA_HERNÁNDEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "INTERPLAZA XELA", colocacion: 67618.13, meta: 195000, brecha: -127381.87, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 18, nombre: "JAQUELINNE_GÓMEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "SAN JUAN OSTUNCALCO", colocacion: 67300, meta: 195000, brecha: -127700, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 19, nombre: "PEDRO_OXLAJ", puesto: "ABF A", cn: "COATEPEQUE", colocacion: 61324.97, meta: 750000, brecha: -688675.03, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 20, nombre: "CAROLINA_TUC", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "INTERPLAZA XELA", colocacion: 56000, meta: 195000, brecha: -139000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 21, nombre: "MARLON_ALVARADO", puesto: "ABF C", cn: "COATEPEQUE", colocacion: 54000, meta: 500000, brecha: -446000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 22, nombre: "JACKELINE_PAC", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "INTERPLAZA XELA", colocacion: 49000, meta: 110000, brecha: -61000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 23, nombre: "HEYDI_HERNÁNDEZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "CC PRADERA XELA", colocacion: 37700, meta: 110000, brecha: -72300, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 24, nombre: "JAQUELINE_REYNOSO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 36600, meta: 500000, brecha: -463400, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 25, nombre: "CINTHIA_SAC", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "XELA CENTRO", colocacion: 31687.85, meta: 195000, brecha: -163312.15, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 26, nombre: "JERLY_CARDONA", puesto: "RECEPTOR PAGADOR", cn: "TRINIDAD COATEPEQUE", colocacion: 31000, meta: 97500, brecha: -66500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 27, nombre: "KAREN_MALDONADO", puesto: "AUXILIAR DE ADMON DE CARTERA", cn: "COATEPEQUE", colocacion: 30274.03, meta: 195000, brecha: -164725.97, diasSinDesembolso: 1, categoria: "AUXILIAR DE ADMON DE CARTERA", genero: "F" },
+            { ranking: 28, nombre: "GERSON_OXLAJ", puesto: "ABF C", cn: "INTERPLAZA XELA", colocacion: 30000, meta: 500000, brecha: -470000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 29, nombre: "EDRAS_GARCÍA", puesto: "ABF C", cn: "COATEPEQUE", colocacion: 25000, meta: 500000, brecha: -475000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 30, nombre: "WESLEY_COXAJ", puesto: "RECEPTOR PAGADOR", cn: "QUETZALTENANGO", colocacion: 24212.64, meta: 97500, brecha: -73287.36, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 31, nombre: "JULIO_SEGURA", puesto: "ABF B", cn: "TRINIDAD COATEPEQUE", colocacion: 23513.19, meta: 600000, brecha: -576486.81, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 32, nombre: "SEILY_LÓPEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "COATEPEQUE", colocacion: 23500, meta: 195000, brecha: -171500, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 33, nombre: "CLARISA_RODAS", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "QUETZALTENANGO", colocacion: 22000, meta: 110000, brecha: -88000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 34, nombre: "MARVIN_GONZALEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "QUETZALTENANGO", colocacion: 16300, meta: 195000, brecha: -178700, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 35, nombre: "DANNY_PEREZ", puesto: "ABF A", cn: "XELA CENTRO", colocacion: 14599.48, meta: 750000, brecha: -735400.52, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 36, nombre: "GUSTAVO_SICÁ", puesto: "AUXILIAR DE ADMON DE CARTERA", cn: "QUETZALTENANGO", colocacion: 12400, meta: 195000, brecha: -182600, diasSinDesembolso: 1, categoria: "AUXILIAR DE ADMON DE CARTERA", genero: "M" },
+            { ranking: 37, nombre: "YANETH_ROSARIO", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "QUETZALTENANGO", colocacion: 11000, meta: 110000, brecha: -99000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 38, nombre: "EDNA_MÉRIDA", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "XELA CENTRO", colocacion: 8000, meta: 110000, brecha: -102000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 39, nombre: "CARLOS_PASTOR", puesto: "ABF B", cn: "CC PRADERA XELA", colocacion: 0, meta: 600000, brecha: -600000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 40, nombre: "JAQUELINE_MIRANDA", puesto: "ABF B", cn: "INTERPLAZA XELA", colocacion: 0, meta: 600000, brecha: -600000, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 41, nombre: "EVA_GRAMAJO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 42, nombre: "KELLY_MEJÍA", puesto: "ABF C", cn: "COATEPEQUE", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 43, nombre: "INGRID_TOSCANO", puesto: "ABF C", cn: "INTERPLAZA XELA", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 44, nombre: "ZAIDA_ALONZO", puesto: "ABF C", cn: "COATEPEQUE", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "F" },
+            { ranking: 45, nombre: "ERICK_RAFAEL", puesto: "ABF C", cn: "CC PRADERA XELA", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 46, nombre: "JORGE_VELASQUEZ", puesto: "ABF C", cn: "XELA CENTRO", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 47, nombre: "VICENTE_PONCIO", puesto: "ABF C", cn: "XELA CENTRO", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 48, nombre: "EMILIO_GARCÍA", puesto: "ABF C", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 500000, brecha: -500000, diasSinDesembolso: 1, categoria: "ABF", genero: "M" },
+            { ranking: 49, nombre: "MARIANA_VELÁSQUEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CC PRADERA XELA", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 50, nombre: "RAQUEL_ROLDAN", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 51, nombre: "BRENDA_GUINAC", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 52, nombre: "MARÍA_CASTRO", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "QUETZALTENANGO", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 53, nombre: "ANGEL_GOMEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "SAN JUAN OSTUNCALCO", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 54, nombre: "JOSÉ_MARROQUÍN", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CC PRADERA XELA", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 55, nombre: "VIVIAN_REYES", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "INTERPLAZA XELA", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 56, nombre: "EDVIN_PENAGOS", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 57, nombre: "ASHLEY_LÓPEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 58, nombre: "KAREN_CABRERA", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 59, nombre: "MAGDA_SAMAYOA", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CC PRADERA XELA", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "F" },
+            { ranking: 60, nombre: "ERICK_MORÁN", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 195000, brecha: -195000, diasSinDesembolso: 1, categoria: "ASISTENTE DE GESTIONES CREDITICAS", genero: "M" },
+            { ranking: 61, nombre: "ASTRID_MAZARIEGOS", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "CC PRADERA XELA", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 62, nombre: "ANIKA_MONTERROSO", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "SAN JUAN OSTUNCALCO", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 63, nombre: "CARMEN_PEREZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 64, nombre: "DELMY_RAMIREZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "CABRICAN", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 65, nombre: "MARLENY_GIRDON", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "INTERPLAZA XELA", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 66, nombre: "EDSON_GODÍNEZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "COATEPEQUE", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "M" },
+            { ranking: 67, nombre: "NUSLY_JIMENEZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "XELA CENTRO", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "F" },
+            { ranking: 68, nombre: "MILTON_CAYAX", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "XELA CENTRO", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 1, categoria: "ASISTENTE DE SERVICIOS BANCARIOS", genero: "M" },
+            { ranking: 69, nombre: "LUIS_CHOZ", puesto: "RECEPTOR PAGADOR", cn: "QUETZALTENANGO", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 70, nombre: "LIZA_MORALES", puesto: "RECEPTOR PAGADOR", cn: "XELA CENTRO", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 71, nombre: "LUCIANO_CHOJOLÁN", puesto: "RECEPTOR PAGADOR", cn: "CC PRADERA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 72, nombre: "JAQUELINE_ICHEL", puesto: "RECEPTOR PAGADOR", cn: "CC PRADERA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 73, nombre: "JULIO_ALVARADO", puesto: "RECEPTOR PAGADOR", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 74, nombre: "MARCO_CAMACHO", puesto: "RECEPTOR PAGADOR", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 75, nombre: "FRANKLIN_VÁSQUEZ", puesto: "RECEPTOR PAGADOR", cn: "COATEPEQUE", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 76, nombre: "GLENDY_CIFUENTES", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 77, nombre: "KAREN_LEÓN", puesto: "RECEPTOR PAGADOR", cn: "COATEPEQUE", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 78, nombre: "EVELYN_RAMOS", puesto: "RECEPTOR PAGADOR", cn: "CABRICAN", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 79, nombre: "STEFANY_LEIVA", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 80, nombre: "RIGOBERTO_HERNÁNDEZ", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 81, nombre: "JAQUELYN_IXCHOP", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 82, nombre: "CARLOS_LEON", puesto: "RECEPTOR PAGADOR", cn: "INTERPLAZA XELA", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 83, nombre: "JOSÉ_ADONAÍN", puesto: "RECEPTOR PAGADOR", cn: "XELA CENTRO", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "M" },
+            { ranking: 84, nombre: "CARMEN_LÓPEZ", puesto: "RECEPTOR PAGADOR", cn: "TRINIDAD COATEPEQUE", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+            { ranking: 85, nombre: "LEISSA_ROJAS", puesto: "RECEPTOR PAGADOR", cn: "SAN JUAN OSTUNCALCO", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 1, categoria: "RECEPTOR PAGADOR", genero: "F" },
+
+        ];
+
+        function getBestPerCategory(data) {
+            const categories = ["AUXILIAR DE ADMON DE CARTERA", "ASISTENTE DE GESTIONES CREDITICAS", "ASISTENTE DE SERVICIOS BANCARIOS", "RECEPTOR PAGADOR", "ABF"];
+            const best = [];
+
+            categories.forEach(category => {
+                const filtered = data.filter(c => c.categoria === category);
+                if (filtered.length > 0) {
+                    const bestInCategory = filtered.reduce((prev, curr) => {
+                        return curr.colocacion > prev.colocacion ? curr : prev;
+                    });
+                    best.push(bestInCategory);
+                }
+            });
+            return best;
+        }
+
+        function renderCards(data, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            data.forEach(colaborador => {
+                const porcentaje = colaborador.meta > 0 ? (colaborador.colocacion / colaborador.meta) * 100 : 0;
+                let progressClass = "progress-red";
+                if (porcentaje > 90) progressClass = "progress-green";
+                else if (porcentaje > 75) progressClass = "progress-yellow";
+
+                const card = document.createElement("div");
+                card.className = "card";
+                const generoClass = colaborador.genero === "M" ? "male" : "female";
+
+                let specialElement = "";
+                if (containerId === "categoryBest") {
+                    specialElement = `<img src="imagenes/trofeo.jpg" alt="Trofeo" class="trophy">`;
+                } else if (colaborador.ranking <= 3) {
+                    if (colaborador.ranking === 1) {
+                        specialElement = `<img src="imagenes/primer_lugar.jpg" alt="Medalla de oro" class="medal">`;
+                    } else if (colaborador.ranking === 2) {
+                        specialElement = `<img src="imagenes/segundo_lugar.jpg" alt="Medalla de plata" class="medal">`;
+                    } else if (colaborador.ranking === 3) {
+                        specialElement = `<img src="imagenes/tercer_lugar.jpg" alt="Medalla de bronce" class="medal">`;
+                    }
+                }
+
+
+
+
+                card.innerHTML = `
+    ${specialElement}
+        <img src="imagenes/${colaborador.nombre}.jpg" alt="${colaborador.nombre}">
+        <h3 class="${generoClass}">${colaborador.ranking}. ${colaborador.nombre}</h3>
+        <p><strong>Puesto:</strong> ${colaborador.puesto}</p>
+        <p><strong>CN:</strong> ${colaborador.cn}</p>
+        <p><strong>Colocación: Q.</strong> ${Number(colaborador.colocacion).toLocaleString('es-GT')}</p>
+        <p><strong>Meta: Q.</strong> ${Number(colaborador.meta).toLocaleString('es-GT')}</p>
+        <p><strong>Brecha: Q.</strong> ${Number(colaborador.brecha).toLocaleString('es-GT')}</p>
+        <p><strong>Días sin Colocar:</strong> ${colaborador.diasSinDesembolso}</p>
+        <div class="progress-bar">
+            <div class="${progressClass}" style="width: ${Math.min(porcentaje, 100)}%;">${Math.round(porcentaje)}%</div>
+        </div>
+`;
+                container.appendChild(card);
+
+            });
+        }
+
+        function updateFilters() {
+            const cn = document.getElementById("cnFilter").value;
+            const puesto = document.getElementById("puestoFilter").value;
+            const categoria = document.getElementById("categoriaFilter").value;
+
+            const filtered = colaboradores.filter(c => {
+                return (!cn || c.cn === cn) &&
+                    (!puesto || c.puesto === puesto) &&
+                    (!categoria || c.categoria === categoria);
+            });
+
+            // Actualizar ranking completo
+            renderCards(filtered, "ranking");
+
+            // Actualizar mejores de cada categoría
+            const bestPerCategory = getBestPerCategory(filtered);
+            renderCards(bestPerCategory, "categoryBest");
+        }
+
+        function initializeFilters() {
+            const cnSet = new Set(colaboradores.map(c => c.cn));
+            const puestoSet = new Set(colaboradores.map(c => c.puesto));
+            const categoriaSet = new Set(colaboradores.map(c => c.categoria));
+
+            const cnFilter = document.getElementById("cnFilter");
+            const puestoFilter = document.getElementById("puestoFilter");
+            const categoriaFilter = document.getElementById("categoriaFilter");
+
+            cnSet.forEach(cn => {
+                const option = document.createElement("option");
+                option.value = cn;
+                option.textContent = cn;
+                cnFilter.appendChild(option);
+            });
+
+            puestoSet.forEach(puesto => {
+                const option = document.createElement("option");
+                option.value = puesto;
+                option.textContent = puesto;
+                puestoFilter.appendChild(option);
+            });
+
+            categoriaSet.forEach(categoria => {
+                const option = document.createElement("option");
+                option.value = categoria;
+                option.textContent = categoria;
+                categoriaFilter.appendChild(option);
+            });
+        }
+
+        // Renderizar datos iniciales
+        const bestPerCategory = getBestPerCategory(colaboradores);
+        renderCards(bestPerCategory, "categoryBest");
+        renderCards(colaboradores, "ranking");
+        initializeFilters();
+    </script>
+</body>
+
+</html>

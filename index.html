@@ -4,342 +4,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Competitivo</title>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
             margin: 0;
             padding: 0;
-            background-image: url('imagenes/logo.jpg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-            opacity: 1;
-            /* Reduce la opacidad del logo */
-        }
-
-        .container {
-            width: 90%;
-            margin: auto;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             overflow: hidden;
-            position: relative;
         }
 
-        h1,
-        h2 {
+        .dashboard {
             text-align: center;
-            margin: 20px 0;
-            color: #ffffff;
-            font-size: 1.5rem;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
             position: relative;
-            z-index: 1;
         }
 
-        h1::before,
-        h2::before {
-            content: "";
+        .dashboard::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
             z-index: -1;
-            border-radius: 10px;
+            transform: rotateZ(30deg);
         }
 
-        .filter {
+        .logo-container {
+            position: relative;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .clock {
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        .buttons {
             display: flex;
-            justify-content: space-between;
-            margin: 20px auto;
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .filter select {
-            background: #2e2e2e;
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            width: 30%;
-        }
-
-        .ranking,
-        .category-best {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            /* Ajuste automático de columnas */
-            grid-auto-rows: minmax(100px, auto);
-            /* Altura mínima de las filas */
-            gap: 28px;
-            /* Espacio entre columnas y filas */
+            gap: 20px;
             justify-content: center;
         }
 
-
-
-        .card {
-            background: rgba(30, 30, 30, 0.9);
-            border: 1px solid #444;
+        .button {
+            text-decoration: none;
+            padding: 15px 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            width: 150px;
-            padding: 10px;
-            position: relative;
-            text-align: center;
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+            color: white;
+            font-size: 1.2rem;
             transition: transform 0.3s, box-shadow 0.3s;
-            font-size: 0.6rem;
-            /* Tamaño de fuente reducido */
+            text-transform: uppercase;
         }
 
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
-        .card img {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .card h3 {
-            margin: 10px 0;
-            font-size: 10px;
-        }
-
-        .card .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #333;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .card .progress-bar div {
-            height: 100%;
-            text-align: center;
-            line-height: 10px;
-            color: #fff;
-        }
-
-        .progress-red {
-            background: red;
-        }
-
-        .progress-yellow {
-            background: yellow;
-            color: black;
-        }
-
-        .progress-green {
-            background: green;
-        }
-
-        .male {
-            color: #00b8d4;
-        }
-
-        .female {
-            color: #ff007f;
-        }
-
-        .trophy {
-            width: 25px;
-            position: absolute;
-            top: -10px;
-            right: -10px;
-        }
-
-        .medal {
-            width: 30px;
-            margin: 10px auto;
-        }
-
-        #filters {
-            margin-bottom: 30px;
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div id="filters" class="filter">
-            <select id="cnFilter" onchange="updateFilters()">
-                <option value="">Seleccione CN</option>
-            </select>
-            <select id="puestoFilter" onchange="updateFilters()">
-                <option value="">Seleccione Puesto</option>
-            </select>
-            <select id="categoriaFilter" onchange="updateFilters()">
-                <option value="">Seleccione Categoría</option>
-            </select>
+    <div class="dashboard">
+        <div class="logo-container">
+            <img src="imagenes/logo.jpg" alt="Logo" class="logo">
+            <div id="clock" class="clock"></div>
         </div>
-
-        <h1>Ranking Competitivo</h1>
-        <h2>Los Mejores de Cada Categoría</h2>
-        <div id="categoryBest" class="category-best"></div>
-
-        <h2>Ranking Completo</h2>
-        <div id="ranking" class="ranking"></div>
+        <div class="buttons">
+            <a href="administradores.html" class="button admin-button">Administradores</a>
+            <a href="asistentes.html" class="button collaborator-button">Colaboradores</a>
+        </div>
+        <div class="footer">Cualquier duda: Gustavo Sicá Ext 44373 o al 33773505</div>
     </div>
 
     <script>
-        const colaboradores = [
-            { ranking: 1, nombre: "NICOLASA_COLOP", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 703221.55, meta: 750000, brecha: -46778.45, diasSinDesembolso: 10, categoria: "ABF", genero: "F" },
-            { ranking: 2, nombre: "EVA_GRAMAJO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 555580.13, meta: 500000, brecha: 55580.13, diasSinDesembolso: 25, categoria: "ABF", genero: "F" },
-            { ranking: 3, nombre: "CARLOS_PÉREZ", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 330905.68, meta: 750000, brecha: -419094.32, diasSinDesembolso: 20, categoria: "ABF", genero: "M" },
-            { ranking: 4, nombre: "ELMER_GARCIA", puesto: "ABF A", cn: "QUETZALTENANGO", colocacion: 329137.24, meta: 750000, brecha: -420862.76, diasSinDesembolso: 26, categoria: "ABF", genero: "M" },
-            { ranking: 5, nombre: "GLORIA_CHOJOLAN", puesto: "ABF A", cn: "CABRICAN", colocacion: 312218.64, meta: 750000, brecha: -437781.36, diasSinDesembolso: 20, categoria: "ABF", genero: "F" },
-            { ranking: 6, nombre: "MARVIN_GONZALEZ", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "QUETZALTENANGO", colocacion: 295000, meta: 195000, brecha: 100000, diasSinDesembolso: 30, categoria: "ASISTENTE", genero: "M" },
-            { ranking: 7, nombre: "JAQUELINE_REYNOSO", puesto: "ABF C", cn: "QUETZALTENANGO", colocacion: 255900, meta: 500000, brecha: -244100, diasSinDesembolso: 9, categoria: "ABF", genero: "F" },
-            { ranking: 8, nombre: "LUIS_CHOZ", puesto: "RECEPTOR PAGADOR", cn: "QUETZALTENANGO", colocacion: 192063.24, meta: 97500, brecha: 94563.24, diasSinDesembolso: 17, categoria: "ASISTENTE", genero: "M" },
-            { ranking: 9, nombre: "WESLEY_COXAJ", puesto: "RECEPTOR PAGADOR", cn: "QUETZALTENANGO", colocacion: 67300, meta: 97500, brecha: -30200, diasSinDesembolso: 17, categoria: "ASISTENTE", genero: "M" },
-            { ranking: 10, nombre: "CLARISA_RODAS", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "QUETZALTENANGO", colocacion: 60500, meta: 110000, brecha: -49500, diasSinDesembolso: 25, categoria: "ASISTENTE", genero: "F" },
-            { ranking: 11, nombre: "RODERICO_ROJAS", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CABRICAN", colocacion: 55700, meta: 195000, brecha: -139300, diasSinDesembolso: 8, categoria: "ASISTENTE", genero: "M" },
-            { ranking: 12, nombre: "KATHERINE_RIOS", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "CABRICAN", colocacion: 55100, meta: 195000, brecha: -139900, diasSinDesembolso: 17, categoria: "ASISTENTE", genero: "F" },
-            { ranking: 13, nombre: "GUSTAVO_SICÁ", puesto: "AUXILIAR DE ADMON DE CARTERA", cn: "QUETZALTENANGO", colocacion: 38700, meta: 195000, brecha: -156300, diasSinDesembolso: 14, categoria: "ASISTENTE", genero: "M" },
-            { ranking: 14, nombre: "MARÍA_CASTRO", puesto: "ASISTENTE DE GESTIONES CREDITICAS", cn: "QUETZALTENANGO", colocacion: 31257.36, meta: 195000, brecha: -163742.64, diasSinDesembolso: 30, categoria: "ASISTENTE", genero: "F" },
-            { ranking: 15, nombre: "DELMY_RAMIREZ", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "CABRICAN", colocacion: 11800, meta: 110000, brecha: -98200, diasSinDesembolso: 18, categoria: "ASISTENTE", genero: "F" },
-            { ranking: 16, nombre: "DARWIN_GONZÁLEZ", puesto: "ADMINISTRADOR SENIOR", cn: "QUETZALTENANGO", colocacion: 0, meta: 1, brecha: -1, diasSinDesembolso: 24, categoria: "ADMINISTRADOR SENIOR", genero: "M" },
-            { ranking: 17, nombre: "GLADIS_VELIZ", puesto: "ADMINISTRADOR DE GC", cn: "QUETZALTENANGO", colocacion: 0, meta: 1, brecha: -1, diasSinDesembolso: 7, categoria: "ADMINISTRADOR DE GC", genero: "F" },
-            { ranking: 18, nombre: "CLAUDIA_CHAJ", puesto: "ADMINISTRADOR DE CN", cn: "QUETZALTENANGO", colocacion: 0, meta: 1, brecha: -1, diasSinDesembolso: 26, categoria: "ADMINISTRADOR DE CN", genero: "F" },
-            { ranking: 19, nombre: "YANETH_ROSARIO", puesto: "ASISTENTE DE SERVICIOS BANCARIOS", cn: "QUETZALTENANGO", colocacion: 0, meta: 110000, brecha: -110000, diasSinDesembolso: 31, categoria: "ASISTENTE", genero: "F" },
-            { ranking: 20, nombre: "DANIEL_VÁSQUEZ", puesto: "ADMINISTRADOR DE CN", cn: "CABRICAN", colocacion: 0, meta: 1, brecha: -1, diasSinDesembolso: 24, categoria: "ADMINISTRADOR DE CN", genero: "M" },
-            { ranking: 21, nombre: "EVELYN_RAMOS", puesto: "RECEPTOR PAGADOR", cn: "CABRICAN", colocacion: 0, meta: 97500, brecha: -97500, diasSinDesembolso: 26, categoria: "ASISTENTE", genero: "F" },
-
-        ];
-
-        function getBestPerCategory(data) {
-            const categories = ["ASISTENTE", "ADMINISTRADOR DE CN", "ADMINISTRADOR DE GC", "ADMINISTRADOR SENIOR", "ABF"];
-            const best = [];
-
-            categories.forEach(category => {
-                const filtered = data.filter(c => c.categoria === category);
-                if (filtered.length > 0) {
-                    const bestInCategory = filtered.reduce((prev, curr) => {
-                        return curr.colocacion > prev.colocacion ? curr : prev;
-                    });
-                    best.push(bestInCategory);
-                }
-            });
-            return best;
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const clockElement = document.getElementById('clock');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        function renderCards(data, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "";
-
-            data.forEach(colaborador => {
-                const porcentaje = colaborador.meta > 0 ? (colaborador.colocacion / colaborador.meta) * 100 : 0;
-                let progressClass = "progress-red";
-                if (porcentaje > 90) progressClass = "progress-green";
-                else if (porcentaje > 75) progressClass = "progress-yellow";
-
-                const card = document.createElement("div");
-                card.className = "card";
-                const generoClass = colaborador.genero === "M" ? "male" : "female";
-
-                let specialElement = "";
-                if (containerId === "categoryBest") {
-                    specialElement = `<img src="imagenes/trofeo.jpg" alt="Trofeo" class="trophy">`;
-                } else if (colaborador.ranking <= 3) {
-                    if (colaborador.ranking === 1) {
-                        specialElement = `<img src="imagenes/primer_lugar.jpg" alt="Medalla de oro" class="medal">`;
-                    } else if (colaborador.ranking === 2) {
-                        specialElement = `<img src="imagenes/segundo_lugar.jpg" alt="Medalla de plata" class="medal">`;
-                    } else if (colaborador.ranking === 3) {
-                        specialElement = `<img src="imagenes/tercer_lugar.jpg" alt="Medalla de bronce" class="medal">`;
-                    }
-                }
-
-
-
-
-                card.innerHTML = `
-                ${specialElement}
-                    <img src="imagenes/${colaborador.nombre}.jpg" alt="${colaborador.nombre}">
-                    <h3 class="${generoClass}">${colaborador.ranking}. ${colaborador.nombre}</h3>
-                    <p><strong>Puesto:</strong> ${colaborador.puesto}</p>
-                    <p><strong>CN:</strong> ${colaborador.cn}</p>
-                    <p><strong>Colocación:</strong> ${colaborador.colocacion}</p>
-                    <p><strong>Meta:</strong> ${colaborador.meta}</p>
-                    <p><strong>Brecha:</strong> ${colaborador.brecha}</p>
-                    <p><strong>Días sin Colocar:</strong> ${colaborador.diasSinDesembolso}</p>
-                    <div class="progress-bar">
-                        <div class="${progressClass}" style="width: ${Math.min(porcentaje, 100)}%;">${Math.round(porcentaje)}%</div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function updateFilters() {
-            const cn = document.getElementById("cnFilter").value;
-            const puesto = document.getElementById("puestoFilter").value;
-            const categoria = document.getElementById("categoriaFilter").value;
-
-            const filtered = colaboradores.filter(c => {
-                return (!cn || c.cn === cn) &&
-                    (!puesto || c.puesto === puesto) &&
-                    (!categoria || c.categoria === categoria);
-            });
-
-            // Actualizar ranking completo
-            renderCards(filtered, "ranking");
-
-            // Actualizar mejores de cada categoría
-            const bestPerCategory = getBestPerCategory(filtered);
-            renderCards(bestPerCategory, "categoryBest");
-        }
-
-        function initializeFilters() {
-            const cnSet = new Set(colaboradores.map(c => c.cn));
-            const puestoSet = new Set(colaboradores.map(c => c.puesto));
-            const categoriaSet = new Set(colaboradores.map(c => c.categoria));
-
-            const cnFilter = document.getElementById("cnFilter");
-            const puestoFilter = document.getElementById("puestoFilter");
-            const categoriaFilter = document.getElementById("categoriaFilter");
-
-            cnSet.forEach(cn => {
-                const option = document.createElement("option");
-                option.value = cn;
-                option.textContent = cn;
-                cnFilter.appendChild(option);
-            });
-
-            puestoSet.forEach(puesto => {
-                const option = document.createElement("option");
-                option.value = puesto;
-                option.textContent = puesto;
-                puestoFilter.appendChild(option);
-            });
-
-            categoriaSet.forEach(categoria => {
-                const option = document.createElement("option");
-                option.value = categoria;
-                option.textContent = categoria;
-                categoriaFilter.appendChild(option);
-            });
-        }
-
-        // Renderizar datos iniciales
-        const bestPerCategory = getBestPerCategory(colaboradores);
-        renderCards(bestPerCategory, "categoryBest");
-        renderCards(colaboradores, "ranking");
-        initializeFilters();
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
     </script>
 </body>
 

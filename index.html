@@ -7,6 +7,17 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .imagen-redonda {
+            width: 1000px;
+            /* Ajusta el tamaño según sea necesario */
+            height: auto;
+            /* Mantiene la proporción de la imagen */
+            border-radius: 10%;
+            /* Hace los bordes redondos */
+            border: 2px solid #000;
+            /* Agrega un borde negro opcional */
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -114,15 +125,20 @@
 
 <body>
     <div class="dashboard">
+        <img src="imagenes/equipo.jpg" alt="Equipo" class="imagen-redonda">
+        <span></span><span></span><span></span><span></span>
         <div class="logo-container">
+
             <img src="imagenes/logo.jpg" alt="Logo" class="logo">
             <div id="clock" class="clock"></div>
         </div>
+
         <div class="buttons">
             <a href="administradores.html" class="button admin-button">Administradores</a>
             <a href="asistentes.html" class="button collaborator-button">Colaboradores</a>
         </div>
-        <div class="footer">Cualquier duda: Gustavo Sicá Ext 44373 o al 33773505</div>
+        <div class="footer">Cualquier duda: Kenny Morales</div>
+        <div class="footer">Hecho Por Gustavo Sica</div>
     </div>
 
     <script>
